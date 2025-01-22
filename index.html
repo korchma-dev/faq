@@ -141,10 +141,15 @@
         .faq-question.sticky {
             position: fixed;
             top: 10px;
+            left: auto;
+            right: auto;
+            background: #ff4d88;
             z-index: 1000;
-            background-color: #ff4d88;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: calc(100% - 40px);
+            max-width: 760px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -279,65 +284,65 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const offset = 10; // Отступ от верхнего края окна
-    let stickyElement = null; // Текущий прилипший элемент
-    let stickyPlaceholder = null; // Заполнитель для предотвращения "дергания"
+    document.querySelectorAll('.faq-item').forEach(faqItem => {
+        const question = faqItem.querySelector('.faq-question');
+        const answer = faqItem.querySelector('.faq-answer');
+        const icon = question.querySelector('.faq-icon');
 
-    function updateSticky() {
-        const faqItems = document.querySelectorAll('.faq-item');
-        let activeSticky = null;
+        let isSticky = false; // State of stickiness
 
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            const itemRect = item.getBoundingClientRect();
-            const questionRect = question.getBoundingClientRect();
-            const itemBottom = itemRect.bottom;
+        // Toggle open/close functionality
+        question.addEventListener('click', () => {
+            const isOpen = answer.classList.contains('open');
 
-            // Проверяем, нужно ли сделать элемент "прилипшим"
-            if (questionRect.top < offset && itemBottom > questionRect.height) {
-                activeSticky = question;
+            // Reset all open answers
+            document.querySelectorAll('.faq-answer.open').forEach(a => a.classList.remove('open'));
+            document.querySelectorAll('.faq-icon.open').forEach(i => i.classList.remove('open'));
 
-                if (stickyElement === question) return; // Пропускаем, если уже прилип
-
-                // Устанавливаем фиксированные параметры
-                const fixedWidth = itemRect.width;
-                question.style.width = `${fixedWidth}px`;
-                question.style.left = `${itemRect.left}px`;
-                question.style.top = `${offset}px`;
-
-                // Добавляем "заполнитель" для предотвращения скачков
-                if (!stickyPlaceholder) {
-                    stickyPlaceholder = document.createElement('div');
-                    stickyPlaceholder.style.height = `${question.offsetHeight}px`;
-                    item.insertBefore(stickyPlaceholder, question);
-                }
-
-                question.classList.add('sticky');
-                stickyElement = question;
+            if (!isOpen) {
+                answer.classList.add('open');
+                icon.classList.add('open');
+                faqItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                answer.classList.remove('open');
+                icon.classList.remove('open');
+                question.classList.remove('sticky'); // Remove stickiness when closed
             }
         });
 
-        // Если нет активного элемента, сбрасываем фиксацию
-        if (!activeSticky && stickyElement) {
-            stickyElement.classList.remove('sticky');
-            stickyElement.style.width = '';
-            stickyElement.style.left = '';
-            stickyElement.style.top = '';
-            stickyElement = null;
+        // Sticky header functionality
+        window.addEventListener('scroll', () => {
+            const rect = faqItem.getBoundingClientRect();
+            const questionRect = question.getBoundingClientRect();
+            const offset = 10; // Offset from the top of the screen
 
-            if (stickyPlaceholder) {
-                stickyPlaceholder.remove();
-                stickyPlaceholder = null;
+            if (rect.top <= offset && rect.bottom > questionRect.height && answer.classList.contains('open')) {
+                if (!isSticky) {
+                    // Set sticky styles
+                    const faqWidth = faqItem.offsetWidth; // Match parent width
+                    const faqLeft = faqItem.getBoundingClientRect().left; // Match parent left position
+
+                    question.style.width = `${faqWidth}px`;
+                    question.style.left = `${faqLeft}px`;
+                    question.style.top = `${offset}px`;
+
+                    question.classList.add('sticky');
+                    isSticky = true;
+                }
+            } else {
+                if (isSticky) {
+                    // Remove sticky styles
+                    question.classList.remove('sticky');
+                    question.style.width = '';
+                    question.style.left = '';
+                    question.style.top = '';
+                    isSticky = false;
+                }
             }
-        }
-    }
-
-    // Обработчик скролла
-    window.addEventListener('scroll', updateSticky);
-
-    // Обновление при загрузке страницы
-    updateSticky();
+        });
+    });
 });
+
 </script>
 
 </body>
