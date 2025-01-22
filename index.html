@@ -279,60 +279,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const offset = 10; // Отступ от верхнего края окна
+    const stickyClass = 'sticky';
 
-    document.querySelectorAll('.faq-item').forEach(faqItem => {
-        const question = faqItem.querySelector('.faq-question');
-        const answer = faqItem.querySelector('.faq-answer');
-        const icon = question.querySelector('.faq-icon');
-        let isSticky = false; // Текущее состояние прилипания
-
-        // Обработчик клика для открытия/закрытия блока
-        question.addEventListener('click', () => {
-            const isOpen = answer.classList.contains('open');
-
-            // Закрываем все открытые блоки
-            document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
-                openAnswer.classList.remove('open');
-                openAnswer.previousElementSibling.classList.remove('sticky');
-            });
-
-            if (!isOpen) {
-                answer.classList.add('open');
-                icon.classList.add('open');
-                faqItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                answer.classList.remove('open');
-                icon.classList.remove('open');
-                question.classList.remove('sticky'); // Убираем прилипание при закрытии
-                resetSticky(question); // Сброс стилей
-            }
-        });
-
-        // Обновляем состояние прилипания при прокрутке
-        window.addEventListener('scroll', () => {
-            const rect = faqItem.getBoundingClientRect();
-            const questionRect = question.getBoundingClientRect();
-
-            // Проверяем, нужно ли сделать заголовок прилипшим
-            if (
-                rect.top <= offset &&
-                rect.bottom > questionRect.height &&
-                answer.classList.contains('open')
-            ) {
-                if (!isSticky) {
-                    stickQuestion(question, faqItem);
-                    isSticky = true;
-                }
-            } else {
-                if (isSticky) {
-                    resetSticky(question);
-                    isSticky = false;
-                }
-            }
-        });
-    });
-
-    // Функция для применения стилей прилипания
+    // Функция для прилипания заголовка
     function stickQuestion(question, faqItem) {
         const faqRect = faqItem.getBoundingClientRect();
         const questionStyles = getComputedStyle(question);
@@ -345,21 +294,60 @@ document.addEventListener('DOMContentLoaded', () => {
         question.style.backgroundColor = questionStyles.backgroundColor;
         question.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
         question.style.borderRadius = '10px';
-        question.classList.add('sticky');
+        question.classList.add(stickyClass);
     }
 
-    // Функция для сброса стилей прилипания
+    // Функция для сброса прилипания
     function resetSticky(question) {
-        question.style.position = '';
-        question.style.top = '';
-        question.style.left = '';
-        question.style.width = '';
-        question.style.zIndex = '';
-        question.style.backgroundColor = '';
-        question.style.boxShadow = '';
-        question.style.borderRadius = '';
-        question.classList.remove('sticky');
+        question.style.cssText = ''; // Полный сброс inline-стилей
+        question.classList.remove(stickyClass);
     }
+
+    // Intersection Observer для отслеживания видимости заголовков
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const faqItem = entry.target;
+            const question = faqItem.querySelector('.faq-question');
+            const answer = faqItem.querySelector('.faq-answer');
+
+            if (entry.intersectionRatio < 1 && answer.classList.contains('open')) {
+                stickQuestion(question, faqItem);
+            } else {
+                resetSticky(question);
+            }
+        });
+    }, { threshold: [0, 1] });
+
+    // Инициализация наблюдателя для каждого FAQ блока
+    document.querySelectorAll('.faq-item').forEach(faqItem => observer.observe(faqItem));
+
+    // Обработчик клика для открытия/закрытия FAQ
+    document.querySelectorAll('.faq-item').forEach(faqItem => {
+        const question = faqItem.querySelector('.faq-question');
+        const answer = faqItem.querySelector('.faq-answer');
+        const icon = question.querySelector('.faq-icon');
+
+        question.addEventListener('click', () => {
+            const isOpen = answer.classList.contains('open');
+
+            // Закрыть все остальные открытые блоки
+            document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
+                if (openAnswer !== answer) {
+                    openAnswer.classList.remove('open');
+                    openAnswer.previousElementSibling.querySelector('.faq-icon').classList.remove('open');
+                }
+            });
+
+            if (!isOpen) {
+                answer.classList.add('open');
+                icon.classList.add('open');
+                faqItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                answer.classList.remove('open');
+                icon.classList.remove('open');
+            }
+        });
+    });
 });
 </script>
 
