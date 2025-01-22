@@ -145,6 +145,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Эффект тени */
             background-color: #ff4d88; /* Сохранение цвета */
             border-radius: 15px; /* Радиус */
+            width: auto; /* Ширина устанавливается из JavaScript */
         }
     </style>
 </head>
@@ -301,9 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Если уже прилип, пропускаем
                 if (stickyElement === question) return;
 
-                // Устанавливаем фиксированную позицию
-                question.style.width = `${itemRect.width}px`; // Ширина равна блоку
-                question.style.left = `${itemRect.left}px`; // Центрирование относительно блока
+                // Устанавливаем фиксированную позицию и ширину только один раз
+                const computedStyles = getComputedStyle(question);
+                const paddingLeft = parseFloat(computedStyles.paddingLeft);
+                const paddingRight = parseFloat(computedStyles.paddingRight);
+                const fixedWidth = itemRect.width - paddingLeft - paddingRight;
+
+                question.style.width = `${fixedWidth}px`; // Фиксируем ширину
+                question.style.left = `${itemRect.left + paddingLeft}px`; // Центрируем относительно блока
 
                 // Добавляем "заполнитель" для сохранения места
                 if (!stickyPlaceholder) {
