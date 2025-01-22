@@ -53,7 +53,7 @@
                     "type": "nested",
                     "subquestions": [
                         {
-                            "subquestion": "This is how you can create headings with nested content",
+                            "subquestion": "This is how you can create headings with nested content 1",
                             "content": [
                                 {
                                     "type": "text",
@@ -62,7 +62,7 @@
                             ]
                         },
                         {
-                            "subquestion": "Can I undo the changes?",
+                            "subquestion": "This is how you can create headings with nested content 2",
                             "content": [
                                 {
                                     "type": "text",
