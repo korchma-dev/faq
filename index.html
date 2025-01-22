@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-    <link rel="manifest" href="img/site.webmanifest">
     <title>FAQ Documentation</title>
     <style>
         body {
@@ -96,7 +92,7 @@
         }
 
         .faq-answer.open {
-            max-height: none;
+            max-height: 10000px;
             padding: 15px;
         }
 
@@ -142,14 +138,16 @@
             display: block;
         }
 
-        /* Sticky header styles */
         .faq-question.sticky {
-            position: sticky;
-            top: 0;
-            background: #ff4d88;
-            z-index: 1000;
-            border-radius: 15px; /* Added color to sticky header */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 10px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: #ff4d88;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -202,7 +200,6 @@
                     const question = faqItem.querySelector('.faq-question');
                     const icon = faqItem.querySelector('.faq-icon');
                     question.addEventListener('click', () => {
-                        // Close all other answers
                         document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
                             if (openAnswer !== answer) {
                                 openAnswer.classList.remove('open');
@@ -281,6 +278,66 @@
     });
 
     loadTexts(currentLang);
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentSticky = null; // Ссылка на текущий "прилипший" заголовок
+        const headerOffset = 10; // Отступ заголовка от верхней границы окна
+
+        // Функция для обновления sticky состояния заголовков
+        function updateStickyState() {
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+
+                if (currentSticky && currentSticky !== question) {
+                    currentSticky.classList.remove('sticky');
+                    currentSticky = null;
+                }
+
+                const rect = question.getBoundingClientRect();
+                const parentBottom = item.getBoundingClientRect().bottom;
+
+                // Проверяем условия для прилипания
+                if (rect.top < headerOffset && parentBottom > rect.height) {
+                    question.classList.add('sticky');
+                    question.style.top = `${headerOffset}px`;
+                    currentSticky = question;
+                } else {
+                    question.classList.remove('sticky');
+                    question.style.top = '';
+                }
+            });
+        }
+
+        // Добавляем обработчик прокрутки
+        window.addEventListener('scroll', updateStickyState);
+
+        // Обновляем состояние при клике на заголовок
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+
+                if (answer.classList.contains('open')) {
+                    // Закрываем блок и прокручиваем к заголовку
+                    answer.classList.remove('open');
+                    question.querySelector('.faq-icon').classList.remove('open');
+                    question.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    updateStickyState();
+                } else {
+                    // Открываем блок
+                    answer.classList.add('open');
+                    question.querySelector('.faq-icon').classList.add('open');
+                }
+            });
+        });
+
+        // Первоначальное состояние
+        updateStickyState();
+    });
 </script>
 
 </body>
