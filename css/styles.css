@@ -146,3 +146,7 @@ body {
     transition: none; /* Убираем анимацию для прилипания */
 }
 
+.faq-question.sticky:hover {
+    background: #e6005c;
+}
+
