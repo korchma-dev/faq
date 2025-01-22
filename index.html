@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ Documentation</title>
     <style>
-        /* Стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             background-color: #ffe6f2;
@@ -132,7 +131,6 @@
             transform: rotate(180deg);
         }
 
-        /* Стиль для вложенных элементов */
         .nested-container {
             margin-left: 20px;
             border-left: 2px solid #ff99c2;
@@ -164,17 +162,15 @@
     </div>
     <h1 class="faq-title">FAQ Documentation</h1>
 
-    <div class="faq-items"></div> <!-- Здесь будут динамически добавляться FAQ -->
+    <div class="faq-items"></div>
 
 </div>
 
 <script>
-    // Переменная для хранения текущего языка
     let currentLang = 'en';
 
-    // Загрузка текста с JSON на старте страницы
     function loadTexts(lang) {
-        fetch(`https://korchma-dev.github.io/faq/lang/${lang}.json`)
+        fetch(`lang/${lang}.json`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Failed to load language file: ${response.status}`);
@@ -182,16 +178,14 @@
                 return response.json();
             })
             .then(data => {
-                // Обновляем заголовок
                 document.querySelector('.faq-title').textContent = data.title;
                 const faqContainer = document.querySelector('.faq-items');
-                faqContainer.innerHTML = ''; // Очистка перед вставкой нового контента
+                faqContainer.innerHTML = '';
 
-                // Присваиваем id элементам FAQ для поиска
                 data.faqs.forEach((faq, index) => {
                     const faqItem = document.createElement('div');
                     faqItem.className = 'faq-item';
-                    faqItem.id = `faq${index + 1}`;  // Уникальный ID для каждого FAQ
+                    faqItem.id = `faq${index + 1}`;
 
                     faqItem.innerHTML = `
                         <div class="faq-question">
@@ -205,7 +199,6 @@
                     renderContent(answer, faq.content);
                     faqContainer.appendChild(faqItem);
 
-                    // Добавляем функционал раскрытия
                     const question = faqItem.querySelector('.faq-question');
                     const icon = faqItem.querySelector('.faq-icon');
                     question.addEventListener('click', () => {
@@ -214,7 +207,6 @@
                     });
                 });
 
-                // Открываем блок FAQ, если есть параметр в URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const faqToOpen = urlParams.get('faq');
                 if (faqToOpen) {
@@ -236,7 +228,6 @@
             .catch(error => console.error('Error loading texts:', error));
     }
 
-    // Функция для отрисовки содержимого
     function renderContent(container, content) {
         content.forEach(item => {
             if (item.type === 'text') {
@@ -265,7 +256,6 @@
                     nestedContainer.appendChild(nestedAnswer);
                     container.appendChild(nestedContainer);
 
-                    // Добавляем функциональность переключения для вложенных вопросов
                     nestedQuestion.addEventListener('click', () => {
                         nestedAnswer.classList.toggle('open');
                     });
@@ -274,16 +264,14 @@
         });
     }
 
-    // Переключение языков
     document.querySelectorAll('.lang-switch button').forEach(button => {
         button.addEventListener('click', function () {
             const lang = this.getAttribute('data-lang');
-            currentLang = lang; // Обновляем текущий язык
+            currentLang = lang;
             loadTexts(lang);
         });
     });
 
-    // Инициализация загрузки текста по умолчанию
     loadTexts(currentLang);
 </script>
 
