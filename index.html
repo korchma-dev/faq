@@ -140,14 +140,9 @@
 
         .faq-question.sticky {
             position: fixed;
-            top: 10px;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background-color: #ff4d88;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            top: 10px; /* Отступ сверху */
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Эффект тени */
         }
     </style>
 </head>
@@ -282,12 +277,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    let stickyElement = null; // Текущий прилипший элемент
     const offset = 10; // Отступ от верхнего края окна
+    let stickyElement = null; // Текущий прилипший элемент
+    let stickyPlaceholder = null; // Заполнитель для предотвращения "дергания"
 
     function updateSticky() {
         const faqItems = document.querySelectorAll('.faq-item');
-        stickyElement = null; // Сброс текущего прилипшего элемента
+        let activeSticky = null; // Для хранения активного прилипшего элемента
 
         faqItems.forEach(item => {
             const question = item.querySelector('.faq-question');
@@ -295,20 +291,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const questionRect = question.getBoundingClientRect();
             const itemBottom = item.getBoundingClientRect().bottom;
 
-            // Если элемент пересек верхний край окна и ещё не достиг конца блока
+            // Проверяем, нужно ли сделать элемент "прилипшим"
             if (questionRect.top < offset && itemBottom > questionRect.height) {
-                stickyElement = question;
+                activeSticky = question;
+
+                // Если уже прилип, пропускаем
+                if (stickyElement === question) return;
+
+                // Устанавливаем фиксированную позицию
+                question.style.width = `${question.offsetWidth}px`;
+                question.style.left = `${question.offsetLeft}px`;
+
+                // Добавляем "заполнитель" для сохранения места
+                if (!stickyPlaceholder) {
+                    stickyPlaceholder = document.createElement('div');
+                    stickyPlaceholder.style.height = `${question.offsetHeight}px`;
+                    item.insertBefore(stickyPlaceholder, question);
+                }
+
                 question.classList.add('sticky');
-                question.style.top = `${offset}px`;
-            } else {
-                question.classList.remove('sticky');
-                question.style.top = '';
+                stickyElement = question;
             }
         });
-    }
 
-    // Обработчик для обновления состояния при скролле
-    window.addEventListener('scroll', updateSticky);
+        // Если нет активного элемента, сбрасываем текущее прилипание
+        if (!activeSticky && stickyElement) {
+            stickyElement.classList.remove('sticky');
+            stickyElement.style.width = '';
+            stickyElement.style.left = '';
+            stickyElement = null;
+
+            if (stickyPlaceholder) {
+                stickyPlaceholder.remove();
+                stickyPlaceholder = null;
+            }
+        }
+    }
 
     // Убираем прилипание при закрытии блока
     document.querySelectorAll('.faq-question').forEach(question => {
@@ -319,8 +337,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Закрываем блок
                 answer.classList.remove('open');
                 question.classList.remove('sticky');
-                question.style.top = '';
+                question.style.width = '';
+                question.style.left = '';
                 stickyElement = null;
+
+                if (stickyPlaceholder) {
+                    stickyPlaceholder.remove();
+                    stickyPlaceholder = null;
+                }
+
                 question.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
                 // Открываем блок
@@ -329,9 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Обработчик для обновления состояния при скролле
+    window.addEventListener('scroll', updateSticky);
+
     // Запускаем проверку при загрузке страницы
     updateSticky();
 });
+
 </script>
 
 </body>
