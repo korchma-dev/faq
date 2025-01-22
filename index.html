@@ -143,6 +143,8 @@
             top: 10px; /* Отступ сверху */
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Эффект тени */
+            background-color: #ff4d88; /* Сохранение цвета */
+            border-radius: 15px; /* Радиус */
         }
     </style>
 </head>
@@ -289,7 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const question = item.querySelector('.faq-question');
             const answer = item.querySelector('.faq-answer');
             const questionRect = question.getBoundingClientRect();
-            const itemBottom = item.getBoundingClientRect().bottom;
+            const itemRect = item.getBoundingClientRect();
+            const itemBottom = itemRect.bottom;
 
             // Проверяем, нужно ли сделать элемент "прилипшим"
             if (questionRect.top < offset && itemBottom > questionRect.height) {
@@ -299,8 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (stickyElement === question) return;
 
                 // Устанавливаем фиксированную позицию
-                question.style.width = `${question.offsetWidth}px`;
-                question.style.left = `${question.offsetLeft}px`;
+                question.style.width = `${itemRect.width}px`; // Ширина равна блоку
+                question.style.left = `${itemRect.left}px`; // Центрирование относительно блока
 
                 // Добавляем "заполнитель" для сохранения места
                 if (!stickyPlaceholder) {
@@ -310,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 question.classList.add('sticky');
+                question.style.top = `${offset}px`;
                 stickyElement = question;
             }
         });
@@ -319,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stickyElement.classList.remove('sticky');
             stickyElement.style.width = '';
             stickyElement.style.left = '';
+            stickyElement.style.top = '';
             stickyElement = null;
 
             if (stickyPlaceholder) {
@@ -339,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 question.classList.remove('sticky');
                 question.style.width = '';
                 question.style.left = '';
+                question.style.top = '';
                 stickyElement = null;
 
                 if (stickyPlaceholder) {
@@ -360,7 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Запускаем проверку при загрузке страницы
     updateSticky();
 });
-
 </script>
 
 </body>
