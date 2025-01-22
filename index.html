@@ -63,6 +63,7 @@
             overflow: hidden;
             border: 1px solid #ff99c2;
             position: relative;
+            background: #fff;
         }
 
         .faq-question {
@@ -106,7 +107,7 @@
         }
 
         .faq-answer.open {
-            max-height: none;
+            max-height: 1000px;
             padding: 15px;
         }
 
@@ -167,8 +168,22 @@
 </div>
 
 <script>
-    let currentLang = 'en';
+        document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+            const icon = question.querySelector('.faq-icon');
 
+            if (!answer.classList.contains('open')) {
+                document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+                document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
+            }
+
+            answer.classList.toggle('open');
+            icon.classList.toggle('open');
+        });
+    });
+    
+    let currentLang = 'en';
     function loadTexts(lang) {
         fetch(`lang/${lang}.json`)
             .then(response => {
