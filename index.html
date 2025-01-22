@@ -281,63 +281,57 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        let currentSticky = null; // Ссылка на текущий "прилипший" заголовок
-        const headerOffset = 10; // Отступ заголовка от верхней границы окна
+document.addEventListener('DOMContentLoaded', () => {
+    let stickyElement = null; // Текущий прилипший элемент
+    const offset = 10; // Отступ от верхнего края окна
 
-        // Функция для обновления sticky состояния заголовков
-        function updateStickyState() {
-            const faqItems = document.querySelectorAll('.faq-item');
+    function updateSticky() {
+        const faqItems = document.querySelectorAll('.faq-item');
+        stickyElement = null; // Сброс текущего прилипшего элемента
 
-            faqItems.forEach(item => {
-                const question = item.querySelector('.faq-question');
-                const answer = item.querySelector('.faq-answer');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            const answer = item.querySelector('.faq-answer');
+            const questionRect = question.getBoundingClientRect();
+            const itemBottom = item.getBoundingClientRect().bottom;
 
-                if (currentSticky && currentSticky !== question) {
-                    currentSticky.classList.remove('sticky');
-                    currentSticky = null;
-                }
-
-                const rect = question.getBoundingClientRect();
-                const parentBottom = item.getBoundingClientRect().bottom;
-
-                // Проверяем условия для прилипания
-                if (rect.top < headerOffset && parentBottom > rect.height) {
-                    question.classList.add('sticky');
-                    question.style.top = `${headerOffset}px`;
-                    currentSticky = question;
-                } else {
-                    question.classList.remove('sticky');
-                    question.style.top = '';
-                }
-            });
-        }
-
-        // Добавляем обработчик прокрутки
-        window.addEventListener('scroll', updateStickyState);
-
-        // Обновляем состояние при клике на заголовок
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const answer = question.nextElementSibling;
-
-                if (answer.classList.contains('open')) {
-                    // Закрываем блок и прокручиваем к заголовку
-                    answer.classList.remove('open');
-                    question.querySelector('.faq-icon').classList.remove('open');
-                    question.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    updateStickyState();
-                } else {
-                    // Открываем блок
-                    answer.classList.add('open');
-                    question.querySelector('.faq-icon').classList.add('open');
-                }
-            });
+            // Если элемент пересек верхний край окна и ещё не достиг конца блока
+            if (questionRect.top < offset && itemBottom > questionRect.height) {
+                stickyElement = question;
+                question.classList.add('sticky');
+                question.style.top = `${offset}px`;
+            } else {
+                question.classList.remove('sticky');
+                question.style.top = '';
+            }
         });
+    }
 
-        // Первоначальное состояние
-        updateStickyState();
+    // Обработчик для обновления состояния при скролле
+    window.addEventListener('scroll', updateSticky);
+
+    // Убираем прилипание при закрытии блока
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+
+            if (answer.classList.contains('open')) {
+                // Закрываем блок
+                answer.classList.remove('open');
+                question.classList.remove('sticky');
+                question.style.top = '';
+                stickyElement = null;
+                question.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // Открываем блок
+                answer.classList.add('open');
+            }
+        });
     });
+
+    // Запускаем проверку при загрузке страницы
+    updateSticky();
+});
 </script>
 
 </body>
