@@ -1,0 +1,83 @@
+{
+    "title": "FAQ Documentation",
+    "faqs": [
+        {
+            "question": "What is this FAQ about?",
+            "content": [
+                {
+                    "type": "text",
+                    "value": "This FAQ provides detailed information about our product, services, and policies."
+                },
+                {
+                    "type": "image",
+                    "src": "img/test.jpg",
+                    "alt": "Example Image"
+                },
+                {
+                    "type": "text",
+                    "value": "You can use this document to understand our offerings better."
+                }
+            ]
+        },
+        {
+            "question": "How can I use this feature?",
+            "content": [
+                {
+                    "type": "text",
+                    "value": "You can enable this feature by navigating to the settings menu."
+                },
+                {
+                    "type": "image",
+                    "src": "img/test.jpg",
+                    "alt": "Settings Example"
+                }
+            ]
+        },
+        {
+            "question": "Can I customize the appearance?",
+            "content": [
+                {
+                    "type": "text",
+                    "value": "Yes, you can fully customize the appearance using the style settings in your dashboard."
+                }
+            ]
+        },
+        {
+            "question": "Nested Example: Advanced Features",
+            "content": [
+                {
+                    "type": "text",
+                    "value": "Here we discuss advanced features and their usage."
+                },
+                {
+                    "type": "nested",
+                    "subquestions": [
+                        {
+                            "subquestion": "How do I activate advanced features?",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "value": "You can activate advanced features in the advanced settings menu."
+                                }
+                            ]
+                        },
+                        {
+                            "subquestion": "Can I undo changes?",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "value": "Yes, you can revert changes by clicking the undo button in the settings."
+                                },
+                                {
+                                    "type": "image",
+                                    "src": "img/test.jpg",
+                                    "alt": "Undo Example"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
