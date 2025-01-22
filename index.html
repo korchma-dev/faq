@@ -138,19 +138,13 @@
             display: block;
         }
 
-        .faq-question.sticky {
-            position: fixed;
-            top: 10px;
-            left: auto;
-            right: auto;
-            background: #ff4d88;
-            z-index: 1000;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: calc(100% - 40px);
-            max-width: 760px;
-            margin: 0 auto;
-        }
+.faq-question.sticky {
+    z-index: 1000;
+    background-color: #ff4d88;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
     </style>
 </head>
 <body>
@@ -284,20 +278,23 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const offset = 10; // Отступ от верхнего края окна
+
     document.querySelectorAll('.faq-item').forEach(faqItem => {
         const question = faqItem.querySelector('.faq-question');
         const answer = faqItem.querySelector('.faq-answer');
         const icon = question.querySelector('.faq-icon');
+        let isSticky = false; // Текущее состояние прилипания
 
-        let isSticky = false; // State of stickiness
-
-        // Toggle open/close functionality
+        // Обработчик клика для открытия/закрытия блока
         question.addEventListener('click', () => {
             const isOpen = answer.classList.contains('open');
 
-            // Reset all open answers
-            document.querySelectorAll('.faq-answer.open').forEach(a => a.classList.remove('open'));
-            document.querySelectorAll('.faq-icon.open').forEach(i => i.classList.remove('open'));
+            // Закрываем все открытые блоки
+            document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
+                openAnswer.classList.remove('open');
+                openAnswer.previousElementSibling.classList.remove('sticky');
+            });
 
             if (!isOpen) {
                 answer.classList.add('open');
@@ -306,43 +303,64 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 answer.classList.remove('open');
                 icon.classList.remove('open');
-                question.classList.remove('sticky'); // Remove stickiness when closed
+                question.classList.remove('sticky'); // Убираем прилипание при закрытии
+                resetSticky(question); // Сброс стилей
             }
         });
 
-        // Sticky header functionality
+        // Обновляем состояние прилипания при прокрутке
         window.addEventListener('scroll', () => {
             const rect = faqItem.getBoundingClientRect();
             const questionRect = question.getBoundingClientRect();
-            const offset = 10; // Offset from the top of the screen
 
-            if (rect.top <= offset && rect.bottom > questionRect.height && answer.classList.contains('open')) {
+            // Проверяем, нужно ли сделать заголовок прилипшим
+            if (
+                rect.top <= offset &&
+                rect.bottom > questionRect.height &&
+                answer.classList.contains('open')
+            ) {
                 if (!isSticky) {
-                    // Set sticky styles
-                    const faqWidth = faqItem.offsetWidth; // Match parent width
-                    const faqLeft = faqItem.getBoundingClientRect().left; // Match parent left position
-
-                    question.style.width = `${faqWidth}px`;
-                    question.style.left = `${faqLeft}px`;
-                    question.style.top = `${offset}px`;
-
-                    question.classList.add('sticky');
+                    stickQuestion(question, faqItem);
                     isSticky = true;
                 }
             } else {
                 if (isSticky) {
-                    // Remove sticky styles
-                    question.classList.remove('sticky');
-                    question.style.width = '';
-                    question.style.left = '';
-                    question.style.top = '';
+                    resetSticky(question);
                     isSticky = false;
                 }
             }
         });
     });
-});
 
+    // Функция для применения стилей прилипания
+    function stickQuestion(question, faqItem) {
+        const faqRect = faqItem.getBoundingClientRect();
+        const questionStyles = getComputedStyle(question);
+
+        question.style.position = 'fixed';
+        question.style.top = `${offset}px`;
+        question.style.left = `${faqRect.left}px`;
+        question.style.width = `${faqRect.width}px`;
+        question.style.zIndex = '1000';
+        question.style.backgroundColor = questionStyles.backgroundColor;
+        question.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+        question.style.borderRadius = '10px';
+        question.classList.add('sticky');
+    }
+
+    // Функция для сброса стилей прилипания
+    function resetSticky(question) {
+        question.style.position = '';
+        question.style.top = '';
+        question.style.left = '';
+        question.style.width = '';
+        question.style.zIndex = '';
+        question.style.backgroundColor = '';
+        question.style.boxShadow = '';
+        question.style.borderRadius = '';
+        question.classList.remove('sticky');
+    }
+});
 </script>
 
 </body>
