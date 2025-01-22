@@ -1,77 +1,77 @@
 {
-    "title": "FAQ Documentation",
+    "title": "FAQ",
     "faqs": [
         {
-            "question": "What is this FAQ about?",
+            "question": "Topic 1",
             "content": [
                 {
                     "type": "text",
-                    "value": "This FAQ provides detailed information about our product, services, and policies."
+                    "value": "This is how text is created"
                 },
                 {
                     "type": "image",
                     "src": "img/test.jpg",
-                    "alt": "Example Image"
+                    "alt": "This is how an image is created"
                 },
                 {
                     "type": "text",
-                    "value": "You can use this document to understand our offerings better."
+                    "value": "This is how text is created after the image"
                 }
             ]
         },
         {
-            "question": "How can I use this feature?",
+            "question": "Topic 2",
             "content": [
                 {
                     "type": "text",
-                    "value": "You can enable this feature by navigating to the settings menu."
+                    "value": "This is how text is created"
                 },
                 {
                     "type": "image",
                     "src": "img/test.jpg",
-                    "alt": "Settings Example"
+                    "alt": "This is how an image is created"
                 }
             ]
         },
         {
-            "question": "Can I customize the appearance?",
+            "question": "Topic 3",
             "content": [
                 {
                     "type": "text",
-                    "value": "Yes, you can fully customize the appearance using the style settings in your dashboard."
+                    "value": "This is how text is created"
                 }
             ]
         },
         {
-            "question": "Nested Example: Advanced Features",
+            "question": "Topic 4",
             "content": [
                 {
                     "type": "text",
-                    "value": "Here we discuss advanced features and their usage."
+                    "value": "This is how text is created"
                 },
                 {
                     "type": "nested",
                     "subquestions": [
                         {
-                            "subquestion": "How do I activate advanced features?",
+                            "subquestion": "This is how you can create headings with nested content",
                             "content": [
                                 {
                                     "type": "text",
-                                    "value": "You can activate advanced features in the advanced settings menu."
+                                    "value": "This is how content with text is created"
                                 }
                             ]
                         },
                         {
-                            "subquestion": "Can I undo changes?",
+                            "subquestion": "Can I undo the changes?",
                             "content": [
                                 {
                                     "type": "text",
-                                    "value": "Yes, you can revert changes by clicking the undo button in the settings."
+                                    "value": "This is how content with text and an image is created"
                                 },
                                 {
                                     "type": "image",
                                     "src": "img/test.jpg",
-                                    "alt": "Undo Example"
+                                    "alt": "This is how an image is created"
                                 }
                             ]
                         }
