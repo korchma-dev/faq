@@ -167,22 +167,7 @@
 
 </div>
 
-<script>
-        document.querySelectorAll('.faq-question').forEach(question => {
-        question.addEventListener('click', () => {
-            const answer = question.nextElementSibling;
-            const icon = question.querySelector('.faq-icon');
-
-            if (!answer.classList.contains('open')) {
-                document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-                document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
-            }
-
-            answer.classList.toggle('open');
-            icon.classList.toggle('open');
-        });
-    });
-    
+<script>    
     let currentLang = 'en';
     function loadTexts(lang) {
         fetch(`lang/${lang}.json`)
