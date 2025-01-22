@@ -90,14 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function stickQuestion(question, faqItem) {
         const faqRect = faqItem.getBoundingClientRect();
+        const parentRect = faqItem.parentElement.getBoundingClientRect(); // Родительский контейнер
+    
         question.style.position = 'fixed';
         question.style.top = `${offset}px`;
-        question.style.left = `${faqRect.left}px`;
-        question.style.width = `${faqRect.width}px`;
+        question.style.left = `${parentRect.left}px`; // Учитываем левый отступ родителя
+        question.style.width = `${parentRect.width}px`; // Устанавливаем ширину родителя
+        question.style.boxSizing = 'border-box'; // Учитываем паддинги и бордеры
         question.style.zIndex = '1000';
+        question.style.backgroundColor = '#ff4d88';
         question.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+        question.style.borderRadius = '10px';
         question.classList.add(stickyClass);
     }
+    
 
     function resetSticky(question) {
         question.style.cssText = ''; // Сброс стилей

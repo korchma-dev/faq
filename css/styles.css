@@ -134,8 +134,15 @@ body {
 }
 
 .faq-question.sticky {
+    position: fixed;
+    top: 10px; /* Отступ от верхнего края */
+    left: 0;
+    width: 100%; /* Фиксированная ширина */
+    box-sizing: border-box; /* Учитываем паддинги и бордеры */
     z-index: 1000;
-    background-color: #ff4d88;
+    background-color: #ff4d88; /* Цвет фона */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    transition: none; /* Убираем анимацию для прилипания */
 }
+
