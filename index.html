@@ -140,12 +140,11 @@
 
         .faq-question.sticky {
             position: fixed;
-            top: 10px; /* Отступ сверху */
+            top: 10px;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Эффект тени */
-            background-color: #ff4d88; /* Сохранение цвета */
-            border-radius: 15px; /* Радиус */
-            width: auto; /* Ширина устанавливается из JavaScript */
+            background-color: #ff4d88;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -286,32 +285,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSticky() {
         const faqItems = document.querySelectorAll('.faq-item');
-        let activeSticky = null; // Для хранения активного прилипшего элемента
+        let activeSticky = null;
 
         faqItems.forEach(item => {
             const question = item.querySelector('.faq-question');
-            const answer = item.querySelector('.faq-answer');
-            const questionRect = question.getBoundingClientRect();
             const itemRect = item.getBoundingClientRect();
+            const questionRect = question.getBoundingClientRect();
             const itemBottom = itemRect.bottom;
 
             // Проверяем, нужно ли сделать элемент "прилипшим"
             if (questionRect.top < offset && itemBottom > questionRect.height) {
                 activeSticky = question;
 
-                // Если уже прилип, пропускаем
-                if (stickyElement === question) return;
+                if (stickyElement === question) return; // Пропускаем, если уже прилип
 
-                // Устанавливаем фиксированную позицию и ширину только один раз
-                const computedStyles = getComputedStyle(question);
-                const paddingLeft = parseFloat(computedStyles.paddingLeft);
-                const paddingRight = parseFloat(computedStyles.paddingRight);
-                const fixedWidth = itemRect.width - paddingLeft - paddingRight;
+                // Устанавливаем фиксированные параметры
+                const fixedWidth = itemRect.width;
+                question.style.width = `${fixedWidth}px`;
+                question.style.left = `${itemRect.left}px`;
+                question.style.top = `${offset}px`;
 
-                question.style.width = `${fixedWidth}px`; // Фиксируем ширину
-                question.style.left = `${itemRect.left + paddingLeft}px`; // Центрируем относительно блока
-
-                // Добавляем "заполнитель" для сохранения места
+                // Добавляем "заполнитель" для предотвращения скачков
                 if (!stickyPlaceholder) {
                     stickyPlaceholder = document.createElement('div');
                     stickyPlaceholder.style.height = `${question.offsetHeight}px`;
@@ -319,12 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 question.classList.add('sticky');
-                question.style.top = `${offset}px`;
                 stickyElement = question;
             }
         });
 
-        // Если нет активного элемента, сбрасываем текущее прилипание
+        // Если нет активного элемента, сбрасываем фиксацию
         if (!activeSticky && stickyElement) {
             stickyElement.classList.remove('sticky');
             stickyElement.style.width = '';
@@ -339,37 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Убираем прилипание при закрытии блока
-    document.querySelectorAll('.faq-question').forEach(question => {
-        question.addEventListener('click', () => {
-            const answer = question.nextElementSibling;
-
-            if (answer.classList.contains('open')) {
-                // Закрываем блок
-                answer.classList.remove('open');
-                question.classList.remove('sticky');
-                question.style.width = '';
-                question.style.left = '';
-                question.style.top = '';
-                stickyElement = null;
-
-                if (stickyPlaceholder) {
-                    stickyPlaceholder.remove();
-                    stickyPlaceholder = null;
-                }
-
-                question.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Открываем блок
-                answer.classList.add('open');
-            }
-        });
-    });
-
-    // Обработчик для обновления состояния при скролле
+    // Обработчик скролла
     window.addEventListener('scroll', updateSticky);
 
-    // Запускаем проверку при загрузке страницы
+    // Обновление при загрузке страницы
     updateSticky();
 });
 </script>
